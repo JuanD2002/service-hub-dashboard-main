@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    --primary: 213 70% 25%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 215 25% 20%;
+
+    --muted: 210 30% 94%;
+    --muted-foreground: 215 15% 45%;
+
+    --accent: 210 100% 96%;
+    --accent-foreground: 213 70% 25%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
+    --ring: 213 70% 45%;
+
+    --radius: 0.75rem;
+
+    /* Custom semantic tokens */
+    --status-active: 142 71% 45%;
+    --status-pending: 45 93% 47%;
+    --status-inactive: 0 72% 51%;
+    
+    --sidebar-bg: 213 70% 20%;
+    --sidebar-fg: 210 40% 96%;
+    --sidebar-hover: 213 60% 30%;
+    --sidebar-active: 213 80% 35%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(213 70% 25%) 0%, hsl(213 80% 35%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 20% 98%) 100%);
+    --gradient-status-active: linear-gradient(135deg, hsl(142 71% 45%) 0%, hsl(142 60% 55%) 100%);
+    --gradient-status-pending: linear-gradient(135deg, hsl(45 93% 47%) 0%, hsl(45 80% 55%) 100%);
+    --gradient-status-inactive: linear-gradient(135deg, hsl(0 72% 51%) 0%, hsl(0 60% 60%) 100%);
+
+    --shadow-sm: 0 1px 2px 0 hsl(215 25% 15% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(215 25% 15% / 0.1), 0 2px 4px -2px hsl(215 25% 15% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(215 25% 15% / 0.1), 0 4px 6px -4px hsl(215 25% 15% / 0.1);
+    --shadow-card: 0 4px 20px -4px hsl(213 70% 25% / 0.12);
+
+    --sidebar-background: 213 70% 20%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 210 100% 96%;
+    --sidebar-primary-foreground: 213 70% 20%;
+    --sidebar-accent: 213 60% 30%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 213 50% 30%;
+    --sidebar-ring: 213 80% 50%;
+  }
+
+  .dark {
+    --background: 215 25% 10%;
+    --foreground: 210 40% 96%;
+
+    --card: 215 25% 14%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 215 25% 14%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 213 80% 55%;
+    --primary-foreground: 215 25% 10%;
+
+    --secondary: 215 20% 20%;
+    --secondary-foreground: 210 40% 96%;
+
+    --muted: 215 20% 20%;
+    --muted-foreground: 215 15% 60%;
+
+    --accent: 215 30% 22%;
+    --accent-foreground: 210 40% 96%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 210 40% 96%;
+
+    --border: 215 20% 22%;
+    --input: 215 20% 22%;
+    --ring: 213 80% 55%;
+
+    --sidebar-bg: 215 25% 8%;
+    --sidebar-fg: 210 40% 96%;
+    --sidebar-hover: 215 25% 15%;
+    --sidebar-active: 213 70% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .sidebar-gradient {
+    background: var(--gradient-primary);
+  }
+  
+  .card-elevated {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .status-indicator {
+    @apply w-3 h-3 rounded-full;
+  }
+  
+  .status-active {
+    background: var(--gradient-status-active);
+    box-shadow: 0 0 8px hsl(var(--status-active) / 0.5);
+  }
+  
+  .status-pending {
+    background: var(--gradient-status-pending);
+    box-shadow: 0 0 8px hsl(var(--status-pending) / 0.5);
+  }
+  
+  .status-inactive {
+    background: var(--gradient-status-inactive);
+    box-shadow: 0 0 8px hsl(var(--status-inactive) / 0.5);
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+  
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out forwards;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+}
