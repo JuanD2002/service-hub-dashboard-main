@@ -79,11 +79,11 @@ interface DashboardLayoutProps {
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
-  const { user, logout } = useAuth();
+  const { user, role, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const menuItems = user?.role === 'admin' ? adminMenuItems : prestadorMenuItems;
+  const menuItems = role === 'admin' ? adminMenuItems : prestadorMenuItems;
 
   const handleLogout = () => {
     logout();

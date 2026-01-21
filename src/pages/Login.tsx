@@ -1,26 +1,21 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Shield, Eye, EyeOff, LogIn } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Shield, Eye, EyeOff, LogIn } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useAuth();
+  // 👇 aquí obtienes login y role SOLO una vez
+  const { login, role } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -31,27 +26,34 @@ const Login: React.FC = () => {
     try {
       const success = await login(email, password);
 
-      if (!success) {
+      if (success) {
         toast({
-          title: "Error de autenticación",
-          description: "Correo o contraseña incorrectos.",
-          variant: "destructive",
+          title: '¡Bienvenido!',
+          description: 'Has iniciado sesión correctamente.',
         });
-        return;
+
+        // 👇 pequeña espera para que el AuthContext actualice el role
+        setTimeout(() => {
+          if (role === 'admin') {
+            navigate('/admin');
+          } else if (role === 'prestador') {
+            navigate('/prestador');
+          } else {
+            navigate('/');
+          }
+        }, 0);
+      } else {
+        toast({
+          title: 'Error de autenticación',
+          description: 'Correo o contraseña incorrectos.',
+          variant: 'destructive',
+        });
       }
-
+    } catch {
       toast({
-        title: "¡Bienvenido!",
-        description: "Has iniciado sesión correctamente.",
-      });
-
-      // 🔥 SIEMPRE navegar a /
-      navigate("/");
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Ocurrió un error al iniciar sesión.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Ocurrió un error al iniciar sesión.',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -73,21 +75,16 @@ const Login: React.FC = () => {
             <Shield className="h-8 w-8 text-primary-foreground" />
           </div>
           <h1 className="text-3xl font-bold text-foreground">TecnoVig</h1>
-          <p className="text-muted-foreground mt-2">
-            Sistema de Gestión en Tecnovigilancia
-          </p>
+          <p className="text-muted-foreground mt-2">Sistema de Gestión en Tecnovigilancia</p>
         </div>
 
         <Card className="card-elevated border-border/50">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-2xl text-center">
-              Iniciar Sesión
-            </CardTitle>
+            <CardTitle className="text-2xl text-center">Iniciar Sesión</CardTitle>
             <CardDescription className="text-center">
               Ingresa tus credenciales para acceder al sistema
             </CardDescription>
           </CardHeader>
-
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -108,7 +105,7 @@ const Login: React.FC = () => {
                 <div className="relative">
                   <Input
                     id="password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -120,11 +117,7 @@ const Login: React.FC = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
@@ -147,6 +140,21 @@ const Login: React.FC = () => {
                 )}
               </Button>
             </form>
+
+            {/* Demo Credentials */}
+            <div className="mt-6 p-4 rounded-lg bg-muted/50 space-y-2">
+              <p className="text-xs font-medium text-muted-foreground text-center">Credenciales de demostración:</p>
+              <div className="grid grid-cols-1 gap-2 text-xs">
+                <div className="flex justify-between items-center p-2 rounded bg-background">
+                  <span className="text-muted-foreground">Admin:</span>
+                  <code className="text-foreground">admin@tecnovig.com / admin123</code>
+                </div>
+                <div className="flex justify-between items-center p-2 rounded bg-background">
+                  <span className="text-muted-foreground">Prestador:</span>
+                  <code className="text-foreground">prestador@unisalud.com / prestador123</code>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

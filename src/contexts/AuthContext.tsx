@@ -23,40 +23,68 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [role, setRole] = useState<"admin" | "prestador" | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Función para cargar datos del usuario + perfil
+  const loadUserWithProfile = async (sessionUser: any) => {
+    if (!sessionUser) {
+      setUser(null);
+      setRole(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Obtén el perfil desde la tabla profiles
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("name, position, organization, status")
+        .eq("id", sessionUser.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching profile:", error);
+      }
+
+      // Combina datos de auth + perfil
+      const fullUser = {
+        ...sessionUser,
+        name: profile?.name || sessionUser.email,
+        position: profile?.position || "Usuario",
+        organization: profile?.organization || "Sin entidad",
+        status: profile?.status || "inactive",
+      };
+
+      setUser(fullUser);
+
+      // Determina el rol basado en el email (como lo tienes ahora)
+      if (sessionUser.email === "admin@tecnovig.com") {
+        setRole("admin");
+      } else {
+        setRole("prestador");
+      }
+    } catch (error) {
+      console.error("Error loading user:", error);
+      setUser(sessionUser);
+      setRole("prestador");
+    }
+
+    setLoading(false);
+  };
+
   useEffect(() => {
     const loadSession = async () => {
       const { data } = await supabase.auth.getSession();
       const sessionUser = data.session?.user ?? null;
 
-      setUser(sessionUser);
-
-      if (sessionUser?.email === "admin@tecnovig.com") {
-        setRole("admin");
-      } else if (sessionUser) {
-        setRole("prestador");
-      } else {
-        setRole(null);
-      }
-
-      setLoading(false);
+      await loadUserWithProfile(sessionUser);
     };
 
     loadSession();
 
+    // Escuchar cambios en autenticación
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         const u = session?.user ?? null;
-        setUser(u);
-
-        if (u?.email === "admin@tecnovig.com") {
-          setRole("admin");
-        } else if (u) {
-          setRole("prestador");
-        } else {
-          setRole(null);
-        }
-
-        setLoading(false);
+        loadUserWithProfile(u);
       }
     );
 
